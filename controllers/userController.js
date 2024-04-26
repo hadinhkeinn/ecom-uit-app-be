@@ -127,6 +127,12 @@ const getUser = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
+// Get all users
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({}).select("-password");
+  res.json(users);
+});
+
 // Get login status
 const getLoginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies.token;
@@ -181,6 +187,7 @@ module.exports = {
   registerUser,
   loginUser,
   logoutUser,
+  getUsers,
   getUser,
   getLoginStatus,
   updateUser,
