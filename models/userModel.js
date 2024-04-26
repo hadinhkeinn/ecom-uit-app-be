@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema({
     type: Object,
     required: false,
   },
-});
+}, { timestamps: true });
 
 // Encrypt password using bcrypt before saving to database
 userSchema.pre("save", async function (next) {
