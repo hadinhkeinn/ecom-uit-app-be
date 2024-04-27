@@ -9,8 +9,12 @@ const {
   reviewProduct,
   deleteReview,
   updateReview,
+  addToWishlist,
 } = require("../controllers/productController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
+const { get } = require("mongoose");
+
+router.patch("/wishlist", protect, addToWishlist);
 
 router.post("/", protect, adminOnly, createProduct);
 router.get("/", getProducts);

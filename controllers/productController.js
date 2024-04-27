@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
+const User = require("../models/userModel");
 const { default: mongoose } = require("mongoose");
+const e = require("express");
 
 const createProduct = asyncHandler(async (req, res) => {
     const { name, sku, category, brand, quantity, description, image, regularPrice, price, color } = req.body;
@@ -165,6 +167,40 @@ const updateReview = asyncHandler(async (req, res) => {
     }
 });
 
+// Thêm vào mua sau
+const addToWishlist = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { prodID } = req.body;
+
+    try {
+        const user = await User.findById(_id);
+        const alreadyInWishlist = user.wishlist.find((item) => item.toString() === prodID);
+        if (alreadyInWishlist) {
+            let user = await User.findByIdAndUpdate(
+                _id,
+                {
+                    $pull: { wishlist: prodID },
+                },
+                { new: true },  
+            );
+            res.status(200).json({ message: "Product removed from wishlist" });
+        } else {
+            let user = await User.findByIdAndUpdate(
+                _id,
+                {
+                    $push: { wishlist: prodID },
+                },
+                { new: true },
+            );
+            res.status(200).json({ message: "Product added to wishlist" });
+        } 
+    } catch (error) {
+        res.status(400);
+        throw new Error(error);
+    }
+
+});
+
 module.exports = {
     createProduct,
     getProducts,
@@ -174,4 +210,5 @@ module.exports = {
     reviewProduct,
     deleteReview,
     updateReview,
+    addToWishlist,
 };
