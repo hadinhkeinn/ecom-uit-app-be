@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { get } = require("mongoose");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -182,6 +183,16 @@ const updatePhoto = asyncHandler(async (req, res) => {
   }
 });
 
+const getWishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const findUser = await User.findById(_id);
+    res.status(200).json(findUser.wishlist);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -191,4 +202,5 @@ module.exports = {
   getLoginStatus,
   updateUser,
   updatePhoto,
+  getWishList,
 };
