@@ -10,11 +10,14 @@ const {
   deleteReview,
   updateReview,
   addToWishlist,
+  uploadImages,
 } = require("../controllers/productController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 const { get } = require("mongoose");
+const { productImgResize, uploadPhoto } = require("../middleware/uploadImage");
 
 router.patch("/wishlist", protect, addToWishlist);
+router.put("/upload/:id", protect, adminOnly, uploadPhoto.array('images', 5), productImgResize, uploadImages);
 
 router.post("/", protect, adminOnly, createProduct);
 router.get("/", getProducts);

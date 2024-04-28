@@ -3,6 +3,7 @@ const Product = require("../models/productModel");
 const User = require("../models/userModel");
 const { default: mongoose } = require("mongoose");
 const e = require("express");
+const cloudinaryUploadImg = require("../utils/cloudinary");
 
 const createProduct = asyncHandler(async (req, res) => {
     const { name, sku, category, brand, quantity, description, image, regularPrice, price, color } = req.body;
@@ -181,7 +182,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
                 {
                     $pull: { wishlist: prodID },
                 },
-                { new: true },  
+                { new: true },
             );
             res.status(200).json({ message: "Product removed from wishlist" });
         } else {
@@ -193,12 +194,38 @@ const addToWishlist = asyncHandler(async (req, res) => {
                 { new: true },
             );
             res.status(200).json({ message: "Product added to wishlist" });
-        } 
+        }
     } catch (error) {
         res.status(400);
         throw new Error(error);
     }
 
+});
+
+// Upload product images
+const uploadImages = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+            const { path } = file;
+            const newPath = await uploader(path);
+            urls.push(newPath);
+        }
+        const findProduct = await Product.findByIdAndUpdate(id,
+            {
+                image: urls.map((file) => file.url),
+            },
+            { new: true }
+        );
+        res.status(200).json(findProduct);
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error);
+    }
 });
 
 module.exports = {
@@ -211,4 +238,5 @@ module.exports = {
     deleteReview,
     updateReview,
     addToWishlist,
+    uploadImages,
 };
