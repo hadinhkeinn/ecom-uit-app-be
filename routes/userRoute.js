@@ -9,6 +9,7 @@ const {
   getLoginStatus,
   updateUser,
   updatePhoto,
+  getWishList,
 } = require("../controllers/userController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -17,6 +18,7 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.get("/getUser", protect, getUser);
 router.get("/getUsers", protect, adminOnly, getUsers);
+router.get("/wishlist", protect, getWishList);
 router.get("/getLoginStatus", getLoginStatus);
 router.patch("/updateUser", protect, updateUser);
 router.patch("/updatePhoto", protect, updatePhoto);
