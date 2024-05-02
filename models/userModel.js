@@ -41,6 +41,11 @@ const userSchema = mongoose.Schema(
     address: {
       type: Object,
       required: false,
+      default: {
+        address: "",
+        province: "",
+        country: "",
+      },
     },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   },
