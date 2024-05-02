@@ -120,7 +120,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 // Get users
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.find(req.user._id).select("-password");
+  const user = await User.findById(req.user._id).select("-password");
 
   if (user) {
     res.status(200).json(user);
@@ -128,7 +128,6 @@ const getUser = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("User not found");
   }
-  res.json(user);
 });
 
 // Get all users
