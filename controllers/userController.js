@@ -157,10 +157,11 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { name, email, phone } = user;
+    const { name, email, phone, address } = user;
     user.name = req.body.name || name;
     user.email = req.body.email || email;
     user.phone = req.body.phone || phone;
+    user.address = req.body.address || address;
 
     const updatedUser = await user.save();
     res.status(200).json(updatedUser);
