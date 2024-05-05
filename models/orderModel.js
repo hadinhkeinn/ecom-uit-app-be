@@ -1,6 +1,6 @@
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
 
-var orderSchema = new mongoose.Schema(
+const orderSchema = mongoose.Schema(
   {
     products: [
       {
@@ -35,4 +35,5 @@ var orderSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;

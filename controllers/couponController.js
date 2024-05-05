@@ -1,6 +1,6 @@
 const Coupon = require("../models/couponModel");
 const asyncHandler = require("express-async-handler");
-const { default: mongoose, get } = require("mongoose");
+const { default: mongoose } = require("mongoose");
 // Create a new coupon
 const createCoupon = asyncHandler(async (req, res) => {
     try {

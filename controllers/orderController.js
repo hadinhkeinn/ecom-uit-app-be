@@ -1,3 +1,10 @@
+const asyncHandler = require("express-async-handler");
+const Order = require("../models/orderModel");
+const Cart = require("../models/cartModel");
+const User = require("../models/userModel");
+const Coupon = require("../models/couponModel");
+const Product = require("../models/productModel");
+
 const createOrder = asyncHandler(async (req, res) => {
   const { coupon } = req.body;
   const { _id } = req.user;
@@ -111,3 +118,11 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
+module.exports = {
+  createOrder,
+  getOrders,
+  getAllOrders,
+  getOrderByUserId,
+  updateOrderStatus,
+};
