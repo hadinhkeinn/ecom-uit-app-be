@@ -8,8 +8,10 @@ const orderSchema = mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
-        count: Number,
-        color: String,
+        quantity: {
+          type: Number,
+          required: true,
+        },
       },
     ],
     paymentIntent: {},
@@ -25,7 +27,7 @@ const orderSchema = mongoose.Schema(
         "Delivered",
       ],
     },
-    orderby: {
+    orderBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
