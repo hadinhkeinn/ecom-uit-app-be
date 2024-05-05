@@ -6,7 +6,7 @@ const e = require("express");
 const cloudinaryUploadImg = require("../utils/cloudinary");
 
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, sku, category, brand, quantity, description, image, regularPrice, price, color } = req.body;
+    const { name, category, brand, quantity, description, image, regularPrice, price, color } = req.body;
 
     if (!name || !category || !brand || !quantity || !price || !description) {
         res.status(400);
@@ -16,7 +16,6 @@ const createProduct = asyncHandler(async (req, res) => {
     // Tạo sản phẩm
     const product = await Product.create({
         name,
-        sku,
         category,
         brand,
         quantity,
