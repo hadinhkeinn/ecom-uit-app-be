@@ -1,10 +1,11 @@
 const router = require("express").Router();
-
+const { protect } = require("../middleware/authMiddleware");
 const cartController = require("../controllers/cartController");
 
-router.get("/:userId", cartController.getCart);
-router.post("/", cartController.addToCart);
-router.post("/quantity", cartController.decrementCartItem);
-router.delete("/:cartItemId", cartController.deleteCartItem);
+router.get("/", protect, cartController.getCart);
+router.post("/", protect, cartController.addToCart);
+router.post("/decrease", protect, cartController.decrementCartItem);
+router.post("/increase", protect, cartController.increaseCartItem);
+router.delete("/:cartItemId", protect, cartController.deleteCartItem);
 
 module.exports = router;
