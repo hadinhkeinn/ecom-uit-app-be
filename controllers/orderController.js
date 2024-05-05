@@ -111,3 +111,5 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
+module.exports = { createOrder, getOrders, getAllOrders, getOrderByUserId, updateOrderStatus };
