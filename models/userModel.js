@@ -1,7 +1,6 @@
 const e = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const { ObjectId } = mongoose.Schema;
 
 const userSchema = mongoose.Schema(
   {
@@ -48,6 +47,9 @@ const userSchema = mongoose.Schema(
       },
     },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    cartItems: [
+
+    ]
   },
   { timestamps: true }
 );
