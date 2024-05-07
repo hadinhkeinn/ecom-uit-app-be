@@ -9,7 +9,9 @@ const {
   getLoginStatus,
   updateUser,
   updatePhoto,
+  addToWishList,
   getWishList,
+  removeFromWishList,
   saveCart,
   getCart,
 } = require("../controllers/userController");
@@ -20,7 +22,9 @@ router.post("/login", loginUser);
 router.get("/logout", logoutUser);
 router.get("/getUser", protect, getUser);
 router.get("/getUsers", protect, adminOnly, getUsers);
-router.get("/wishlist", protect, getWishList);
+router.post("/addToWishList", protect, addToWishList);
+router.get("/getWishlist", protect, getWishList);
+router.put("/wishlist/:productId", protect, removeFromWishList);
 router.get("/getLoginStatus", getLoginStatus);
 router.patch("/updateUser", protect, updateUser);
 router.patch("/updatePhoto", protect, updatePhoto);

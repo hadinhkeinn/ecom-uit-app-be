@@ -46,7 +46,9 @@ const userSchema = mongoose.Schema(
         country: "",
       },
     },
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    wishlist: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    ],
     cartItems: [
 
     ]
