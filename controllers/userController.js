@@ -187,11 +187,47 @@ const updatePhoto = asyncHandler(async (req, res) => {
   }
 });
 
+const addToWishList = asyncHandler(async (req, res) => {
+  const { productId } = req.body;
+  const { _id } = req.user;
+  try {
+    const user = await User.findById(_id);
+    const checkProduct = user.wishlist.includes(productId);
+    if (checkProduct) { 
+      res.status(200).json({ message: "Sản phẩm đã có trong mua sau" });
+      return;
+    }
+    else
+      user.wishlist.push(productId);
+    await user.save();
+    res.status(200).json({ message: "Thêm vào mua sau thành công" });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 const getWishList = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   try {
-    const findUser = await User.findById(_id);
-    res.status(200).json(findUser.wishlist);
+    const findUser = await User.findOne({ _id }).populate("wishlist");
+    res.status(200).json(findUser);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const removeFromWishList = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const { _id } = req.user;
+
+  try {
+    const user = await User.findByIdAndUpdate(_id, {
+      $pull: { wishlist: productId },
+    }, { new: true });
+
+    await user.save();
+    res.status(200).json({ message: "Sản phẩm đã được xóa khỏi danh sách!" });
+
   } catch (error) {
     throw new Error(error);
   }
@@ -229,7 +265,9 @@ module.exports = {
   getLoginStatus,
   updateUser,
   updatePhoto,
+  addToWishList,
   getWishList,
+  removeFromWishList,
   saveCart,
   getCart,
 };
