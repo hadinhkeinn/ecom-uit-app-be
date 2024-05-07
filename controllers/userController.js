@@ -197,6 +197,29 @@ const getWishList = asyncHandler(async (req, res) => {
   }
 });
 
+const saveCart = asyncHandler(async (req, res) => {
+  const { cartItems } = req.body;
+  const { _id } = req.user;
+  try {
+    const user = await User.findById(_id);
+    user.cartItems = cartItems;
+    await user.save();
+    res.status(200).json(user.cartItems);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const getCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const user = await User.findById(_id);
+    res.status(200).json(user.cartItems);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -207,4 +230,6 @@ module.exports = {
   updateUser,
   updatePhoto,
   getWishList,
+  saveCart,
+  getCart,
 };

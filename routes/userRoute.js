@@ -10,6 +10,8 @@ const {
   updateUser,
   updatePhoto,
   getWishList,
+  saveCart,
+  getCart,
 } = require("../controllers/userController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -22,5 +24,7 @@ router.get("/wishlist", protect, getWishList);
 router.get("/getLoginStatus", getLoginStatus);
 router.patch("/updateUser", protect, updateUser);
 router.patch("/updatePhoto", protect, updatePhoto);
+router.patch("/saveCart", protect, saveCart);
+router.get("/getCart", protect, getCart);
 
 module.exports = router;
