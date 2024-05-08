@@ -3,62 +3,33 @@ const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 const User = require("../models/userModel");
 const Coupon = require("../models/couponModel");
-const Product = require("../models/productModel");
 
 const createOrder = asyncHandler(async (req, res) => {
-  const { coupon } = req.body;
   const { _id } = req.user;
-  // validateMongoDbId(_id);
+  const {
+    orderDate,
+    orderTime,
+    orderAmount,
+    orderStatus,
+    paymentMethod,
+    cartItems,
+    shippingAddress,
+    coupon,
+  } = req.body;
+
   try {
-    const user = await User.findById(_id);
-    const userCart = await Cart.findOne({ userId: user._id }).populate(
-      "products.cartItem",
-      "_id name price image"
-    );
-    let finalAmount = 0;
-    let cartTotal = 0;
-    const products = userCart.products;
-    for (let i = 0; i < products.length; i++) {
-      cartTotal += products[i].cartItem.price * products[i].quantity;
-    }
-
-    if (coupon) {
-      const validCoupon = await Coupon.findOne({ name: coupon });
-      if (validCoupon === null) {
-        throw new Error("Invalid Coupon");
-      }
-      finalAmount = (
-        cartTotal -
-        (cartTotal * validCoupon.discount) / 100
-      ).toFixed(2);
-    } else {
-      finalAmount = cartTotal;
-    }
-
-    await new Order({
-      products: [...userCart.products],
-      paymentIntent: {
-        // id: uniqid(),
-        // method: "COD",
-        amount: finalAmount,
-        status: "Processing",
-        created: Date.now(),
-        currency: "VND",
-      },
-      orderBy: user._id,
-      orderStatus: "Processing",
-    }).save();
-
-    // let update = userCart.products.map((item) => {
-    //   return {
-    //     updateOne: {
-    //       filter: { _id: item.cartItem },
-    //       update: { $inc: { quantity: -item.count, sold: +item.count } },
-    //     },
-    //   };
-    // });
-    // await Product.bulkWrite(update, {});
-    res.json({ message: "success" });
+    const order = await Order.create({
+      user: _id,
+      orderDate,
+      orderTime,
+      orderAmount,
+      orderStatus,
+      paymentMethod,
+      cartItems,
+      shippingAddress,
+      coupon,
+    });
+    res.status(201).json({ order: order, message: "Đặt hàng thành công!" });
   } catch (error) {
     throw new Error(error);
   }
@@ -66,39 +37,37 @@ const createOrder = asyncHandler(async (req, res) => {
 
 const getOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  // validateMongoDbId(_id);
+
   try {
-    const userOrders = await Order.findOne({ orderBy: _id })
-      .populate("products.product")
-      .populate("orderBy")
-      .exec();
-    res.json(userOrders);
+    const user = await User.findOne({ _id });
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    if (user.role === 'admin') {
+      const orders = await Order.find()
+        .sort("-createdAt")
+        .exec();
+      res.status(200).json(orders);
+    } else {
+      const orders = await Order.find({ user: _id })
+        .sort("-createdAt")
+        .exec();
+      res.status(200).json(orders);
+    }
+
   } catch (error) {
     throw new Error(error);
   }
 });
 
-const getAllOrders = asyncHandler(async (req, res) => {
-  try {
-    const allUserOrders = await Order.find()
-      .populate("products.product")
-      .populate("orderBy")
-      .exec();
-    res.json(allUserOrders);
-  } catch (error) {
-    throw new Error(error);
-  }
-});
-
-const getOrderByUserId = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+const getOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
   // validateMongoDbId(id);
   try {
-    const userOrders = await Order.findOne({ orderBy: userId })
-      .populate("products.product")
-      .populate("orderBy")
-      .exec();
-    res.json(userOrders);
+    const order = await Order.findById(id)
+    res.status(200).json(order);
   } catch (error) {
     throw new Error(error);
   }
@@ -127,7 +96,6 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 module.exports = {
   createOrder,
   getOrders,
-  getAllOrders,
-  getOrderByUserId,
+  getOrder,
   updateOrderStatus,
 };
