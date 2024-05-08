@@ -11,7 +11,10 @@ const createOrder = asyncHandler(async (req, res) => {
   // validateMongoDbId(_id);
   try {
     const user = await User.findById(_id);
-    const userCart = await Cart.findOne({ userId: user._id }).populate("products.cartItem", "_id name price image");
+    const userCart = await Cart.findOne({ userId: user._id }).populate(
+      "products.cartItem",
+      "_id name price image"
+    );
     let finalAmount = 0;
     let cartTotal = 0;
     const products = userCart.products;
@@ -33,7 +36,7 @@ const createOrder = asyncHandler(async (req, res) => {
     }
 
     await new Order({
-      products: [ ...userCart.products ],
+      products: [...userCart.products],
       paymentIntent: {
         // id: uniqid(),
         // method: "COD",
@@ -79,20 +82,21 @@ const getAllOrders = asyncHandler(async (req, res) => {
   try {
     const allUserOrders = await Order.find()
       .populate("products.product")
-      .populate("orderby")
+      .populate("orderBy")
       .exec();
     res.json(allUserOrders);
   } catch (error) {
     throw new Error(error);
   }
 });
+
 const getOrderByUserId = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { userId } = req.params;
   // validateMongoDbId(id);
   try {
-    const userOrders = await Order.findOne({ orderBy: id })
+    const userOrders = await Order.findOne({ orderBy: userId })
       .populate("products.product")
-      .populate("orderby")
+      .populate("orderBy")
       .exec();
     res.json(userOrders);
   } catch (error) {
