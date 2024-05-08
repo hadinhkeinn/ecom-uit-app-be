@@ -19,6 +19,21 @@ const getCoupons = asyncHandler(async (req, res) => {
         throw new Error(error);
     }
 });
+
+// Get a single coupon
+const getCoupon = asyncHandler(async (req, res) => {
+    const { name } = req.params;
+    try {
+        const coupon = await Coupon.findOne({ name });
+        if (!coupon) {
+            res.status(404);
+            throw new Error("Coupon not found");
+        }
+        res.status(200).json(coupon);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
 // Update a coupon
 const updateCoupon = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -43,6 +58,7 @@ const deleteCoupon = asyncHandler(async (req, res) => {
 module.exports = {
     createCoupon,
     getCoupons,
+    getCoupon,
     updateCoupon,
     deleteCoupon,
 };
