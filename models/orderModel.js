@@ -2,24 +2,29 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema(
   {
-    products: [
-      {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    paymentIntent: {},
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    orderDate: {
+      type: Date,
+      required: true,
+    },
+    orderTime: {
+      type: String,
+      required: true,
+    },
+    orderAmount: {
+      type: Number,
+      required: true,
+    },
     orderStatus: {
       type: String,
       default: "Not Processed",
       enum: [
         "Not Processed",
+        "Order Placed",
         "On Delivery",
         "Processing",
         "Dispatched",
@@ -27,13 +32,20 @@ const orderSchema = mongoose.Schema(
         "Delivered",
       ],
     },
-    orderBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    paymentMethod: {
+      type: String,
+      required: true,
     },
+    cartItems: [],
+    shippingAddress: {
+      type: Object,
+    },
+    coupon: {
+      type: Object,
+    }
   },
-  {
-    timestamps: true,
+{
+  timestamps: true,
   }
 );
 
