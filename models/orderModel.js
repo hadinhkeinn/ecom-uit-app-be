@@ -21,7 +21,7 @@ const orderSchema = mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      default: "Not Processed",
+      default: "Đang chờ",
       enum: [
         "Đang chờ",
         "Đã xác nhận",
