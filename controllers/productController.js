@@ -6,9 +6,9 @@ const e = require("express");
 const cloudinaryUploadImg = require("../utils/cloudinary");
 
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, category, brand, quantity, description, image, regularPrice, price, color } = req.body;
+    const { name, category, quantity, description, image, regularPrice, price } = req.body;
 
-    if (!name || !category || !brand || !quantity || !price || !description) {
+    if (!name || !category || !quantity || !price || !description) {
         res.status(400);
         throw new Error("Please fill in all fields");
     }
@@ -17,13 +17,11 @@ const createProduct = asyncHandler(async (req, res) => {
     const product = await Product.create({
         name,
         category,
-        brand,
         quantity,
         description,
         image,
         regularPrice,
         price,
-        color,
     })
     res.status(201).json(product);
 });
