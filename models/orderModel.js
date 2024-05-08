@@ -23,13 +23,12 @@ const orderSchema = mongoose.Schema(
       type: String,
       default: "Not Processed",
       enum: [
-        "Not Processed",
-        "Order Placed",
-        "On Delivery",
-        "Processing",
-        "Dispatched",
-        "Cancelled",
-        "Delivered",
+        "Đang chờ",
+        "Đã xác nhận",
+        "Đang vận chuyển",
+        "Đã giao hàng",
+        "Hoàn thành",
+        "Đã hủy",
       ],
     },
     paymentMethod: {
@@ -42,10 +41,10 @@ const orderSchema = mongoose.Schema(
     },
     coupon: {
       type: Object,
-    }
+    },
   },
-{
-  timestamps: true,
+  {
+    timestamps: true,
   }
 );
 
