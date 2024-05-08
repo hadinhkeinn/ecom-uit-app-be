@@ -73,21 +73,14 @@ const getOrder = asyncHandler(async (req, res) => {
   }
 });
 const updateOrderStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
+  const { orderStatus } = req.body;
   const { id } = req.params;
   // validateMongoDbId(id);
   try {
-    const updateOrderStatus = await Order.findByIdAndUpdate(
-      id,
-      {
-        orderStatus: status,
-        paymentIntent: {
-          status: status,
-        },
-      },
-      { new: true }
-    );
-    res.json(updateOrderStatus);
+    const order = await Order.findByIdAndUpdate(id, { orderStatus }, { new: true });
+
+    await order.save();
+    res.status(200).json({ data: order, message: "Cập nhật trạng thái đơn hàng thành công!" });
   } catch (error) {
     throw new Error(error);
   }
