@@ -13,6 +13,6 @@ router.post("/", protect, createOrder);
 router.get("/:id", protect, getOrder);
 router.get("/", protect, getOrders);
 // router.get("/:userId", protect, getOrderByUserId);
-router.put("/:orderId", protect, adminOnly, updateOrderStatus);
+router.patch("/:id", protect, adminOnly, updateOrderStatus);
 
 module.exports = router;
