@@ -3,7 +3,94 @@ const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 const User = require("../models/userModel");
 const Coupon = require("../models/couponModel");
+const moment = require("moment");
+const qs = require("qs");
+const crypto = require("crypto");
 
+/// Sort object by key
+function sortObject(obj) {
+  const sorted = {};
+  const str = [];
+  let key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
+    }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(
+      /%20/g,
+      '+',
+    );
+  }
+  return sorted;
+}
+
+// Create payment url
+const createPaymentUrl = asyncHandler(async (req, res) => {
+  process.env.TZ = 'Asia/Ho_Chi_Minh';
+
+  const userId = req.user._id;
+  let discountId = req.body.discountId;
+  if (!discountId) {
+    discountId = '';
+  }
+
+  const date = new Date();
+  const createDate = moment(date).format('YYYYMMDDHHmmss');
+
+  const ipAddr =
+    req.headers['x-forwarded-for'] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    (req.connection.socket
+      ? req.connection.socket.remoteAddress
+      : null);
+
+  const tmnCode = "6YVIZ9MZ";
+  const secretKey = "9NIFJSGWEUNK84TO8XNWZCRJF0LAECAC";
+  let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+  const returnUrl = "http://localhost:3000/checkout-success";
+  const orderId = moment(date).format('DDHHmmss');
+  const bankCode = req.body.bankCode || '';
+  const locale = 'vn';
+  const currCode = 'VND';
+  const amount = req.body.amount;
+  let vnp_Params = {};
+  // vnp_Params['vnp_UserId'] = userId;
+  // vnp_Params['vnp_DiscountId'] = discountId;
+  vnp_Params['vnp_Version'] = '2.1.0';
+  vnp_Params['vnp_Command'] = 'pay';
+  vnp_Params['vnp_TmnCode'] = tmnCode;
+  vnp_Params['vnp_Locale'] = locale;
+  vnp_Params['vnp_CurrCode'] = currCode;
+  vnp_Params['vnp_TxnRef'] = orderId;
+  vnp_Params['vnp_OrderInfo'] =
+    'ThanhtoanchomaGD:' + orderId + ' ' + userId + ' ' + discountId;
+  vnp_Params['vnp_OrderType'] = 'other';
+  vnp_Params['vnp_Amount'] = amount * 100;
+  vnp_Params['vnp_ReturnUrl'] = returnUrl;
+  vnp_Params['vnp_IpAddr'] = ipAddr;
+  vnp_Params['vnp_CreateDate'] = createDate;
+  if (bankCode !== null && bankCode !== '') {
+    vnp_Params['vnp_BankCode'] = bankCode;
+  }
+
+  vnp_Params = sortObject(vnp_Params);
+
+  const signData = qs.stringify(vnp_Params, { encode: false });
+  const hmac = crypto.createHmac('sha512', secretKey);
+  const signed = hmac
+    .update(Buffer.from(signData, 'utf-8'))
+    .digest('hex');
+  vnp_Params['vnp_SecureHash'] = signed;
+  vnpUrl += '?' + qs.stringify(vnp_Params, { encode: false });
+
+  res.json(vnpUrl);
+});
+
+// Create order
 const createOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const {
@@ -91,4 +178,5 @@ module.exports = {
   getOrders,
   getOrder,
   updateOrderStatus,
+  createPaymentUrl,
 };
