@@ -10,7 +10,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
     if (!name || !category || !quantity || !price || !description) {
         res.status(400);
-        throw new Error("Please fill in all fields");
+        throw new Error("Vui lòng nhập đầy đủ thông tin sản phẩm.");
     }
 
     // Tạo sản phẩm
@@ -37,7 +37,7 @@ const getProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
         res.status(404);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm.");
     }
     res.status(200).json(product);
 
@@ -48,10 +48,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
         res.status(404);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm.");
     }
     await Product.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Product removed" })
+    res.status(200).json({ message: "Sản phẩm đã được xóa thành công!" })
 
 });
 
@@ -61,7 +61,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
         res.status(404);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm.");
     }
 
     // Update product
@@ -81,14 +81,14 @@ const reviewProduct = asyncHandler(async (req, res) => {
     // Validation
     if (star < 1 || !review) {
         res.status(400);
-        throw new Error("Please add star rating and review");
+        throw new Error("Vui lòng thêm đánh giá và nhận xét.");
     }
 
     const product = await Product.findById(id);
 
     if (!product) {
         res.status(400);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm");
     }
 
     // Update Rating
@@ -102,7 +102,7 @@ const reviewProduct = asyncHandler(async (req, res) => {
         }
     );
     product.save();
-    res.status(200).json({ message: "Product review added." });
+    res.status(200).json({ message: "Đánh giá sản phẩm thành công." });
 });
 
 // Delete review
@@ -112,13 +112,13 @@ const deleteReview = asyncHandler(async (req, res) => {
 
     if (!product) {
         res.status(400);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm");
     }
 
     const newRatings = product.ratings.filter((rating) => rating.userId.toString() !== userID.toString());
     product.ratings = newRatings;
     product.save();
-    res.status(200).json({ message: "Product review deleted." });
+    res.status(200).json({ message: "Xóa đánh giá thành công." });
 });
 
 const updateReview = asyncHandler(async (req, res) => {
@@ -128,20 +128,20 @@ const updateReview = asyncHandler(async (req, res) => {
     // Validation
     if (star < 1 || !review) {
         res.status(400);
-        throw new Error("Please add star rating and review");
+        throw new Error("Vui lòng thêm đánh giá và nhận xét.");
     }
 
     const product = await Product.findById(id);
 
     if (!product) {
         res.status(400);
-        throw new Error("Product not found");
+        throw new Error("Không tìm thấy sản phẩm");
     }
 
     // Match user to review
     if (req.user._id.toString() !== userID) {
         res.status(401);
-        throw new Error("User not authorized to update review");
+        throw new Error("Không thể cập nhật đánh giá của người khác.");
     }
 
     // Update product review
@@ -159,9 +159,9 @@ const updateReview = asyncHandler(async (req, res) => {
         }
     );
     if (updatedReview) {
-        res.status(200).json({ message: "Product review updated." });
+        res.status(200).json({ message: "Đánh giá sản phẩm được cập nhật." });
     } else {
-        res.status(400).json({ message: "Product review NOT updated." });
+        res.status(400).json({ message: "Đánh giá sản phẩm chưa được cập nhật." });
     }
 });
 
@@ -181,7 +181,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
                 },
                 { new: true },
             );
-            res.status(200).json({ message: "Product removed from wishlist" });
+            res.status(200).json({ message: "Sản phẩm đã được xóa khỏi danh sách mua sau" });
         } else {
             let user = await User.findByIdAndUpdate(
                 _id,
@@ -190,7 +190,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
                 },
                 { new: true },
             );
-            res.status(200).json({ message: "Product added to wishlist" });
+            res.status(200).json({ message: "Sản phẩm đã được thêm vào danh sách mua sau" });
         }
     } catch (error) {
         res.status(400);

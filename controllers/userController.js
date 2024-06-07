@@ -71,16 +71,16 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // Validate email and password
   if (!email || !password) {
-    res.status(400);
-    throw new Error("Please fill in all fields");
+    res.status(400).json({ message: "Vui lòng nhập đầy đủ email và mật khẩu!" });
+    // throw new Error("Please fill in all fields");
   }
 
   // Check if user exists
   const user = await User.findOne({ email });
 
   if (!user) {
-    res.status(400);
-    throw new Error("Invalid email or password");
+    res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
+    // throw new Error("Invalid email or password");
   }
 
   // User exists, check password
@@ -115,7 +115,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ message: "Successfully Logged Out" });
+  res.status(200).json({ message: "Đăng xuất thành công!" });
 });
 
 // Get users
@@ -126,7 +126,7 @@ const getUser = asyncHandler(async (req, res) => {
     res.status(200).json(user);
   } else {
     res.status(404);
-    throw new Error("User not found");
+    throw new Error("Không tìm thấy người dùng");
   }
 });
 
@@ -167,7 +167,7 @@ const updateUser = asyncHandler(async (req, res) => {
     res.status(200).json(updatedUser);
   } else {
     res.status(404);
-    throw new Error("User not found");
+    throw new Error("Không tìm thấy người dùng");
   }
 });
 
